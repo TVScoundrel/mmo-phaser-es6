@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/TVScoundrel/mmo-phaser-es6/issues"
   },
-  "homepage": "https://github.com/TVScoundrel/mmo-phaser-es6#readme"
+  "homepage": "https://github.com/TVScoundrel/mmo-phaser-es6#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.1"
+  }
 }
