@@ -35,10 +35,10 @@ class Game extends Phaser.State {
         this.playerMap[id] = this.game.add.sprite(x, y, 'sprite');
     }
 
-    movePlayer = function(id,x,y){
+    movePlayer = function(id, x, y){
         var player = this.playerMap[id];
-        var distance = Phaser.Math.distance(player.x,player.y,x,y);
-        var duration = distance*10;
+        var distance = Phaser.Math.distance(player.x, player.y, x, y);
+        var duration = distance * 10;
         var tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
