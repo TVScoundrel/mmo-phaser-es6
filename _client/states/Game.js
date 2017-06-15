@@ -5,6 +5,7 @@ class Game extends Phaser.State {
         super()
         this.client = new Client(this)
         this.playerMap = {}
+        this.teamMap = {}
         this.foodMap = {}
 
         this.state = {
@@ -71,8 +72,8 @@ class Game extends Phaser.State {
         this.playerMap[id].height = 25;
         
         //hits this and adds to team, doesn't render the player?
-        // if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
-        //                              else{tTeam.add(this.playerMap[id])}
+        if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
+                                     else{tTeam.add(this.playerMap[id])}
 
         console.log('TEAL TEAM from state:', this.state.teams[0])
 
