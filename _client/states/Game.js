@@ -5,14 +5,15 @@ class Game extends Phaser.State {
         super()
         this.client = new Client(this)
         this.playerMap = {}
-        this.teamMap = {}
+        this.tealTeamMap = {}
+        this.orangeTeamMap = {}
+        this.score = {
+            teal: 0,
+            orange: 0
+        }
         this.foodMap = {}
 
-        this.state = {
-            team: '',
-            teams: [],
-            foodCount: 0
-        }
+        this.foodCount = 0
     }
    
 
@@ -23,21 +24,10 @@ class Game extends Phaser.State {
         this.game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32)
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
-        this.game.load.image('pizza','assets/sprites/teal-player.png')
+        this.game.load.image('pizza','assets/sprites/pizza.png')
     }
 
     create() {
-
-        const tealTeam = this.game.add.group();
-        const orangeTeam = this.game.add.group();
-        const food = this.game.add.group()
-
-        this.state.teams = [tealTeam, orangeTeam]
-
-        let coin = Math.floor(Math.random()*2)
-        if(coin === 0){this.state.team = 'orange'}
-        else{this.state.team = 'teal'}
-
 
         var map = this.game.add.tilemap('map')
         map.addTilesetImage('tilesheet', 'tileset')
@@ -60,34 +50,29 @@ class Game extends Phaser.State {
     }
 
     //STEP FOUR
-    addNewPlayer(id, x, y) {
+    addNewPlayer(id, x, y, team) {
 
-        let oTeam = this.state.teams[1]
-        let tTeam = this.state.teams[0]
+        if(id%2===0) team = 'orange'
+        else team = 'teal'
         
-        if(this.state.team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
-                                    else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
+        console.log('A new player just joined team', team)
+        if(team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
+                         else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
         
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
-        
-        //hits this and adds to team, doesn't render the player?
-        if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
-                                     else{tTeam.add(this.playerMap[id])}
-
-        console.log('TEAL TEAM from state:', this.state.teams[0])
 
     }
 
-    makeFood(){
-        console.log('in make food')
-        if(this.state.foodCount < 50){
-            console.log('making food')
-            let offSet = (50 - this.state.foodCount)
+    update(){
+        if(this.foodCount < 10){
+            let offSet = (10 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
-                this.foodMap[i] = this.game.add.sprite(Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), 'pizza')    
-                this.state.foodCount++
-            }    
+                console.log('making new food')
+                let newFood = this.game.add.sprite(Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), 'pizza')
+                this.foodMap[i] = newFood
+                this.foodCount++
+            }
         }   
     }
 
