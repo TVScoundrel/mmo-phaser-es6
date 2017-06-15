@@ -8,9 +8,7 @@ class Client {
 
         //STEP THREE:
         this.socket.on('newplayer',function(data){
-            //do the coin toss here
-            game.addNewPlayer(data.id, data.x, data.y)
-            //game.makeFood()
+            game.addNewPlayer(data.id, data.x, data.y, data.team)
         })
 
         this.socket.on('allplayers',function(data){
@@ -21,6 +19,7 @@ class Client {
 
         this.socket.on('move',function(data){
             game.movePlayer(data.id,data.x,data.y);
+            game.eatFood(data.id);
         })
 
         this.socket.on('remove',function(id){
