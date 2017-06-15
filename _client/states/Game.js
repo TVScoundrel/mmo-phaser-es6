@@ -70,15 +70,24 @@ class Game extends Phaser.State {
         else team = 'teal'
 
         console.log('A new player just joined team', team)
+
+        // CREATE THE PLAYER:
         if(team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
                          else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
         
+        // ADD TO TEAM MAP:
         if(team === 'orange'){this.orangeTeamMap[id] = this.playerMap[id]}
                          else{this.tealTeamMap[id] = this.playerMap[id]}
 
+        // ADD TEAM PROPERTY TO PLAYER?
+        if(team === 'orange'){this.orangeTeamMap[id].teamName = 'orange'}
+                         else{this.tealTeamMap[id].teamName = 'teal'}
+                         
+        // SET PLAYER SIZE:
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
 
+        // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
 
     }
@@ -94,14 +103,13 @@ class Game extends Phaser.State {
                 let y = Math.floor(Math.random() * 500);
                 let newFood = this.game.add.sprite(x, y, 'pizza')
                 newFood.anchor.setTo(0.5, 0.5);
-                this.foodMap[this.foodId] = newFood
-                // this.foodMap[i] = newFood
+                this.foodMap[this.foodId] = newFood;
                 this.foodId++
                 this.foodCount++
             }
         }    
     }
-
+    
 
 
     eatFood = function(id){
@@ -115,7 +123,9 @@ class Game extends Phaser.State {
                 this.playerMap[id].height += 1;
                 this.removeFood(food)
                 this.foodCount--;
+                this.score[this.playerMap[id].teamName]++;
             }
+            console.log(this.score)
 
         })
 
