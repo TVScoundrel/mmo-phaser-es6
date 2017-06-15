@@ -12,6 +12,7 @@ class Game extends Phaser.State {
             orange: 0
         }
         this.foodMap = {}
+        this.foodId = 0
         this.foodCount = 0
         this.initialFoodParams = [300,100,300,223,340,231,367,231,290,210]
     }
@@ -41,10 +42,11 @@ class Game extends Phaser.State {
         //making food in game:
          let j = 0
          for (var i = 0; i < 5; i++){
-                
                 let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
-                this.foodMap[i] = newFood
-                this.foodCount++
+                newFood.anchor.setTo(0.5, 0.5);
+                this.foodMap[this.foodId] = newFood
+                this.foodId++;
+                this.foodCount++;
                 j+= 2
             } 
    
@@ -74,36 +76,43 @@ class Game extends Phaser.State {
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
 
+        this.playerMap[id].anchor.setTo(0.5, 0.5);
+
     }
 
     update(){
         // CHECK FOR SCORE UPDATES HERE AND REPOST SCOREBORD! //
 
+        // Regenerating food
         if(this.foodCount < 5){
             let offSet = (5 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
-                console.log('making NEW food')
-                let newFood = this.game.add.sprite(Math.floor(Math.random()*100), Math.floor(Math.random()*100), 'pizza')
-                this.foodMap[i] = newFood
+                let x = Math.floor(Math.random() * 500);
+                let y = Math.floor(Math.random() * 500);
+                let newFood = this.game.add.sprite(x, y, 'pizza')
+                newFood.anchor.setTo(0.5, 0.5);
+                this.foodMap[this.foodId] = newFood
+                // this.foodMap[i] = newFood
+                this.foodId++
                 this.foodCount++
             }
-    
+            console.log(this.foodMap)
         }    
     }
 
 
 
     eatFood = function(id){
-        this.playerMap[id].width += 2;
-        this.playerMap[id].height += 2;
+
         let playerLocation = this.playerMap[id].worldPosition
 
-        
-    
         Object.keys(this.foodMap).forEach(food => {
             let foodLocation = this.foodMap[food].worldPosition
-            if(playerLocation.x > foodLocation.x - 10 && playerLocation.x < foodLocation.x + 10){
-                console.log('YUMMY!!!')
+            if(playerLocation.x > foodLocation.x - 15 && playerLocation.x < foodLocation.x + 15){
+                this.playerMap[id].width += 5 //2;
+                this.playerMap[id].height += 5 //2;
+                this.removeFood(food)
+                this.foodCount--;
             }
 
         })
