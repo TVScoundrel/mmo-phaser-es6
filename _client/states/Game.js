@@ -14,13 +14,12 @@ class Game extends Phaser.State {
             foodCount: 0
         }
     }
-   
 
 
     preload() {
         this.game.stage.disableVisibilityChange = true
-        this.game.load.tilemap('map', 'assets/map/example_map.json', null, Phaser.Tilemap.TILED_JSON)
-        this.game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32)
+        this.game.load.tilemap('map', 'assets/map/level1..csv')
+        this.game.load.image('tileset', 'assets/map/floor1.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/teal-player.png')
@@ -39,13 +38,14 @@ class Game extends Phaser.State {
         else{this.state.team = 'teal'}
 
 
-        var map = this.game.add.tilemap('map')
-        map.addTilesetImage('tilesheet', 'tileset')
+        var map = this.game.add.tilemap('map',64,64)
+        map.addTilesetImage('tileset')
         var layer
         for(var i = 0; i < map.layers.length; i++) {
             layer = map.createLayer(i)
         }
-
+        console.log(layer)
+        //layer.scale = {x:5, y:5}
         layer.inputEnabled = true
 
 
@@ -64,16 +64,16 @@ class Game extends Phaser.State {
 
         let oTeam = this.state.teams[1]
         let tTeam = this.state.teams[0]
-        
+
         if(this.state.team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
                                     else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
-        
+
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
-        
+
         //hits this and adds to team, doesn't render the player?
-        if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
-                                     else{tTeam.add(this.playerMap[id])}
+        // if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
+        //                              else{tTeam.add(this.playerMap[id])}
 
         console.log('TEAL TEAM from state:', this.state.teams[0])
 
@@ -85,10 +85,10 @@ class Game extends Phaser.State {
             console.log('making food')
             let offSet = (50 - this.state.foodCount)
             for (var i = 0; i <= offSet; i++){
-                this.foodMap[i] = this.game.add.sprite(Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), 'pizza')    
+                this.foodMap[i] = this.game.add.sprite(Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), 'pizza')
                 this.state.foodCount++
-            }    
-        }   
+            }
+        }
     }
 
 
