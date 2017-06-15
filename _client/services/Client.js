@@ -8,6 +8,7 @@ class Client {
 
         this.socket.on('newplayer',function(data){
             game.addNewPlayer(data.id, data.x, data.y)
+            game.makeFood()
         })
 
         this.socket.on('allplayers',function(data){

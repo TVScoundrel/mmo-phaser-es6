@@ -5,10 +5,12 @@ class Game extends Phaser.State {
         super()
         this.client = new Client(this)
         this.playerMap = {}
+        this.foodMap = {}
 
         this.state = {
             team: '',
-            teams: []
+            teams: [],
+            foodCount: 0
         }
     }
    
@@ -20,12 +22,15 @@ class Game extends Phaser.State {
         this.game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32)
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
+        this.game.load.image('pizza','assets/sprites/teal-player.png')
     }
 
     create() {
 
         const tealTeam = this.game.add.group();
         const orangeTeam = this.game.add.group();
+        const food = this.game.add.group()
+
         this.state.teams = [tealTeam, orangeTeam]
 
         let coin = Math.floor(Math.random()*2)
@@ -51,6 +56,7 @@ class Game extends Phaser.State {
     }
 
     addNewPlayer(id, x, y) {
+
         let oTeam = this.state.teams[1]
         let tTeam = this.state.teams[0]
         
@@ -60,16 +66,28 @@ class Game extends Phaser.State {
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
         
-        //hits this, but doesn't add to team and like, mutates the player?
-        if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
-                                     else{tTeam.add(this.playerMap[id])}
+        //hits this and adds to team, doesn't render the player?
+        // if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
+        //                              else{tTeam.add(this.playerMap[id])}
 
         console.log('TEAL TEAM from state:', this.state.teams[0])
 
     }
 
+    makeFood(){
+        console.log('in make food')
+        if(this.state.foodCount < 50){
+            console.log('making food')
+            let offSet = (50 - this.state.foodCount)
+            for (var i = 0; i <= offSet; i++){
+                this.foodMap[i] = this.game.add.sprite(Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), 'pizza')    
+                this.state.foodCount++
+            }    
+        }   
+    }
 
 
+    //copy this pattern for player collide possibly...
     movePlayer = function(id, x, y){
         var player = this.playerMap[id];
         var distance = Phaser.Math.distance(player.x, player.y, x, y);
