@@ -13,7 +13,7 @@ class Game extends Phaser.State {
         }
         this.foodMap = {}
         this.foodCount = 0
-        this.initialFoodParams = [400,100,300,250,340,231,367,789,654,432]
+        this.initialFoodParams = [300,100,300,223,340,231,367,231,290,210]
     }
    
 
@@ -46,7 +46,7 @@ class Game extends Phaser.State {
                 this.foodMap[i] = newFood
                 this.foodCount++
                 j+= 2
-            }
+            } 
    
         //STEP ONE:
         this.client.askNewPlayer()
@@ -87,10 +87,28 @@ class Game extends Phaser.State {
                 this.foodMap[i] = newFood
                 this.foodCount++
             }
-        }   
+    
+        }    
     }
 
 
+
+    eatFood = function(id){
+        this.playerMap[id].width += 2;
+        this.playerMap[id].height += 2;
+        let playerLocation = this.playerMap[id].worldPosition
+
+        
+    
+        Object.keys(this.foodMap).forEach(food => {
+            let foodLocation = this.foodMap[food].worldPosition
+            if(playerLocation.x > foodLocation.x - 10 && playerLocation.x < foodLocation.x + 10){
+                console.log('YUMMY!!!')
+            }
+
+        })
+
+    }
 
     //copy this pattern for player collide possibly...
     movePlayer = function(id, x, y){

@@ -19,6 +19,7 @@ class Client {
 
         this.socket.on('move',function(data){
             game.movePlayer(data.id,data.x,data.y);
+            game.eatFood(data.id);
         })
 
         this.socket.on('remove',function(id){
