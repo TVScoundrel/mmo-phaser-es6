@@ -1,8 +1,5 @@
 import Client from '../services/Client'
 
-var tealTeam;
-var orangeTeam;
-
 class Game extends Phaser.State {
     constructor() {
         super()
@@ -10,7 +7,8 @@ class Game extends Phaser.State {
         this.playerMap = {}
 
         this.state = {
-            team: ''
+            team: '',
+            teams: []
         }
     }
    
@@ -26,8 +24,9 @@ class Game extends Phaser.State {
 
     create() {
 
-        tealTeam = this.game.add.group();
-        orangeTeam = this.game.add.group();
+        const tealTeam = this.game.add.group();
+        const orangeTeam = this.game.add.group();
+        this.state.teams = [tealTeam, orangeTeam]
 
         let coin = Math.floor(Math.random()*2)
         if(coin === 0){this.state.team = 'orange'}
@@ -52,15 +51,24 @@ class Game extends Phaser.State {
     }
 
     addNewPlayer(id, x, y) {
+        let oTeam = this.state.teams[1]
+        let tTeam = this.state.teams[0]
+        
         if(this.state.team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
                                     else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
         
-        if(this.state.team === 'orange'){this.orangeTeam.add(this.playerMap[id])}
-                                    else{this.tealTeam.add(this.playerMap[id])}
-
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
+        
+        //hits this, but doesn't add to team and like, mutates the player?
+        if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
+                                     else{tTeam.add(this.playerMap[id])}
+
+        console.log('TEAL TEAM from state:', this.state.teams[0])
+
     }
+
+
 
     movePlayer = function(id, x, y){
         var player = this.playerMap[id];
