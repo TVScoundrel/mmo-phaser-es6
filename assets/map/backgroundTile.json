@@ -1,0 +1,12 @@
+{ "columns":1,
+ "image":"..\/..\/..\/..\/Downloads\/floor1.png",
+ "imageheight":64,
+ "imagewidth":64,
+ "margin":0,
+ "name":"background",
+ "spacing":0,
+ "tilecount":1,
+ "tileheight":64,
+ "tilewidth":64,
+ "type":"tileset"
+}

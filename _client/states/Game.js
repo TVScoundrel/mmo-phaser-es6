@@ -16,13 +16,12 @@ class Game extends Phaser.State {
         this.foodCount = 0
         this.initialFoodParams = [300,100,300,223,340,231,367,231,290,210]
     }
-   
 
 
     preload() {
         this.game.stage.disableVisibilityChange = true
-        this.game.load.tilemap('map', 'assets/map/example_map.json', null, Phaser.Tilemap.TILED_JSON)
-        this.game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32)
+        this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
+        this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
@@ -30,13 +29,18 @@ class Game extends Phaser.State {
 
     create() {
 
-        var map = this.game.add.tilemap('map')
-        map.addTilesetImage('tilesheet', 'tileset')
+        // Scale the game to fill the entire page.
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
+        var map = this.game.add.tilemap('map',64,64)
+        map.addTilesetImage('tileset')
+
         var layer
         for(var i = 0; i < map.layers.length; i++) {
             layer = map.createLayer(i)
         }
-
+        console.log(layer)
+        //layer.scale = {x:5, y:5}
         layer.inputEnabled = true
 
         //making food in game:
@@ -62,7 +66,6 @@ class Game extends Phaser.State {
 
     //STEP FOUR
     addNewPlayer(id, x, y, team) {
-
         if(id%2===0) team = 'orange'
         else team = 'teal'
 
@@ -96,7 +99,6 @@ class Game extends Phaser.State {
                 this.foodId++
                 this.foodCount++
             }
-            console.log(this.foodMap)
         }    
     }
 
