@@ -6,9 +6,11 @@ class Client {
         this.socket = io.connect()
         var game = theGame
 
+        //STEP THREE:
         this.socket.on('newplayer',function(data){
+            //do the coin toss here
             game.addNewPlayer(data.id, data.x, data.y)
-            game.makeFood()
+            //game.makeFood()
         })
 
         this.socket.on('allplayers',function(data){
@@ -26,6 +28,7 @@ class Client {
         })
     }
 
+    //STEP TWO:
     askNewPlayer() {
         this.socket.emit('newplayer')
     }

@@ -46,6 +46,9 @@ class Game extends Phaser.State {
         }
 
         layer.inputEnabled = true
+
+
+        //STEP ONE:
         this.client.askNewPlayer()
 
         layer.events.onInputUp.add(this.getCoordinates, this)
@@ -55,6 +58,7 @@ class Game extends Phaser.State {
         this.client.sendClick(pointer.worldX, pointer.worldY)
     }
 
+    //STEP FOUR
     addNewPlayer(id, x, y) {
 
         let oTeam = this.state.teams[1]
