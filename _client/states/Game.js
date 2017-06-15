@@ -11,7 +11,7 @@ class Game extends Phaser.State {
         this.game.stage.disableVisibilityChange = true
         this.game.load.tilemap('map', 'assets/map/example_map.json', null, Phaser.Tilemap.TILED_JSON)
         this.game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32)
-        this.game.load.image('sprite','assets/sprites/sprite.png')
+        this.game.load.image('sprite','assets/sprites/orange-player.png')
     }
 
     create() {
@@ -33,6 +33,8 @@ class Game extends Phaser.State {
 
     addNewPlayer(id, x, y) {
         this.playerMap[id] = this.game.add.sprite(x, y, 'sprite');
+        this.playerMap[id].width = 25;
+        this.playerMap[id].height = 25;
     }
 
     movePlayer = function(id, x, y){
