@@ -18,15 +18,17 @@ class Game extends Phaser.State {
 
     preload() {
         this.game.stage.disableVisibilityChange = true
-        this.game.load.tilemap('map', 'assets/map/level1..csv')
-        this.game.load.image('tileset', 'assets/map/floor1.png')
+        this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
+        this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/teal-player.png')
     }
 
     create() {
-
+        // Scale the game to fill the entire page.
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        
         const tealTeam = this.game.add.group();
         const orangeTeam = this.game.add.group();
         const food = this.game.add.group()
