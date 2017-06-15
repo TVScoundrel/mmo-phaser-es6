@@ -5,14 +5,16 @@ class Game extends Phaser.State {
         super()
         this.client = new Client(this)
         this.playerMap = {}
-        this.teamMap = {}
-        this.foodMap = {}
-
-        this.state = {
-            team: '',
-            teams: [],
-            foodCount: 0
+        this.tealTeamMap = {}
+        this.orangeTeamMap = {}
+        this.score = {
+            teal: 0,
+            orange: 0
         }
+        this.foodMap = {}
+        this.foodId = 0
+        this.foodCount = 0
+        this.initialFoodParams = [300,100,300,223,340,231,367,231,290,210]
     }
 
 
@@ -22,26 +24,17 @@ class Game extends Phaser.State {
         this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
-        this.game.load.image('pizza','assets/sprites/teal-player.png')
+        this.game.load.image('pizza','assets/sprites/pizza.png')
     }
 
     create() {
+
         // Scale the game to fill the entire page.
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        
-        const tealTeam = this.game.add.group();
-        const orangeTeam = this.game.add.group();
-        const food = this.game.add.group()
-
-        this.state.teams = [tealTeam, orangeTeam]
-
-        let coin = Math.floor(Math.random()*2)
-        if(coin === 0){this.state.team = 'orange'}
-        else{this.state.team = 'teal'}
-
 
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
+
         var layer
         for(var i = 0; i < map.layers.length; i++) {
             layer = map.createLayer(i)
@@ -50,7 +43,17 @@ class Game extends Phaser.State {
         //layer.scale = {x:5, y:5}
         layer.inputEnabled = true
 
-
+        //making food in game:
+         let j = 0
+         for (var i = 0; i < 5; i++){
+                let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
+                newFood.anchor.setTo(0.5, 0.5);
+                this.foodMap[this.foodId] = newFood
+                this.foodId++;
+                this.foodCount++;
+                j+= 2
+            } 
+   
         //STEP ONE:
         this.client.askNewPlayer()
 
@@ -62,37 +65,61 @@ class Game extends Phaser.State {
     }
 
     //STEP FOUR
-    addNewPlayer(id, x, y) {
+    addNewPlayer(id, x, y, team) {
+        if(id%2===0) team = 'orange'
+        else team = 'teal'
 
-        let oTeam = this.state.teams[1]
-        let tTeam = this.state.teams[0]
-
-        if(this.state.team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
-                                    else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
+        console.log('A new player just joined team', team)
+        if(team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
+                         else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
+        
+        if(team === 'orange'){this.orangeTeamMap[id] = this.playerMap[id]}
+                         else{this.tealTeamMap[id] = this.playerMap[id]}
 
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
 
-        //hits this and adds to team, doesn't render the player?
-        // if(this.state.team === 'orange'){oTeam.add(this.playerMap[id])}
-        //                              else{tTeam.add(this.playerMap[id])}
-
-        console.log('TEAL TEAM from state:', this.state.teams[0])
+        this.playerMap[id].anchor.setTo(0.5, 0.5);
 
     }
 
-    makeFood(){
-        console.log('in make food')
-        if(this.state.foodCount < 50){
-            console.log('making food')
-            let offSet = (50 - this.state.foodCount)
+    update(){
+        // CHECK FOR SCORE UPDATES HERE AND REPOST SCOREBORD! //
+
+        // Regenerating food
+        if(this.foodCount < 5){
+            let offSet = (5 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
-                this.foodMap[i] = this.game.add.sprite(Math.floor(Math.random() * 200), Math.floor(Math.random() * 200), 'pizza')
-                this.state.foodCount++
+                let x = Math.floor(Math.random() * 500);
+                let y = Math.floor(Math.random() * 500);
+                let newFood = this.game.add.sprite(x, y, 'pizza')
+                newFood.anchor.setTo(0.5, 0.5);
+                this.foodMap[this.foodId] = newFood
+                // this.foodMap[i] = newFood
+                this.foodId++
+                this.foodCount++
             }
-        }
+        }    
     }
 
+
+
+    eatFood = function(id){
+
+        let playerLocation = this.playerMap[id].worldPosition
+
+        Object.keys(this.foodMap).forEach(food => {
+            let foodLocation = this.foodMap[food].worldPosition
+            if(playerLocation.x > foodLocation.x - 15 && playerLocation.x < foodLocation.x + 15){
+                this.playerMap[id].width += 5 //2;
+                this.playerMap[id].height += 5 //2;
+                this.removeFood(food)
+                this.foodCount--;
+            }
+
+        })
+
+    }
 
     //copy this pattern for player collide possibly...
     movePlayer = function(id, x, y){
@@ -102,6 +129,11 @@ class Game extends Phaser.State {
         var tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
+    }
+
+    removeFood = function(id){
+        this.foodMap[id].destroy();
+        delete this.foodMap[id];
     }
 
     removePlayer = function(id){
