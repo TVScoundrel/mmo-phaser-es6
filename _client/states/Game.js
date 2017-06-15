@@ -12,8 +12,8 @@ class Game extends Phaser.State {
             orange: 0
         }
         this.foodMap = {}
-
         this.foodCount = 0
+        this.initialFoodParams = [400,100,300,250,340,231,367,789,654,432]
     }
    
 
@@ -38,7 +38,16 @@ class Game extends Phaser.State {
 
         layer.inputEnabled = true
 
-
+        //making food in game:
+         let j = 0
+         for (var i = 0; i < 5; i++){
+                
+                let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
+                this.foodMap[i] = newFood
+                this.foodCount++
+                j+= 2
+            }
+   
         //STEP ONE:
         this.client.askNewPlayer()
 
@@ -54,27 +63,33 @@ class Game extends Phaser.State {
 
         if(id%2===0) team = 'orange'
         else team = 'teal'
-        
+
         console.log('A new player just joined team', team)
         if(team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
                          else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
         
+        if(team === 'orange'){this.orangeTeamMap[id] = this.playerMap[id]}
+                         else{this.tealTeamMap[id] = this.playerMap[id]}
+
         this.playerMap[id].width = 25;
         this.playerMap[id].height = 25;
 
     }
 
     update(){
-        if(this.foodCount < 10){
-            let offSet = (10 - this.foodCount)
+        // CHECK FOR SCORE UPDATES HERE AND REPOST SCOREBORD! //
+
+        if(this.foodCount < 5){
+            let offSet = (5 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
-                console.log('making new food')
-                let newFood = this.game.add.sprite(Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), 'pizza')
+                console.log('making NEW food')
+                let newFood = this.game.add.sprite(Math.floor(Math.random()*100), Math.floor(Math.random()*100), 'pizza')
                 this.foodMap[i] = newFood
                 this.foodCount++
             }
         }   
     }
+
 
 
     //copy this pattern for player collide possibly...
@@ -85,6 +100,11 @@ class Game extends Phaser.State {
         var tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
+    }
+
+    removeFood = function(id){
+        this.foodMap[id].destroy();
+        delete this.foodMap[id];
     }
 
     removePlayer = function(id){
