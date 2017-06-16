@@ -1,5 +1,7 @@
 import Client from '../services/Client'
 let orangeText;
+let gameOverText;
+
 class Game extends Phaser.State {
     constructor() {
         super()
@@ -76,6 +78,14 @@ class Game extends Phaser.State {
         orangeText.fill = 'white'
         orangeText.anchor.setTo(0.5)
         orangeText.lineSpacing = -6
+
+        gameOverText = this.game.add.text(this.world.centerX - 500, this.world.centerY - 500, "")
+        gameOverText.fixedToCamera= true;
+        gameOverText.font = 'Audiowide'
+        gameOverText.fontSize = 40
+        gameOverText.fill = 'purple'
+        gameOverText.anchor.setTo(0.5)
+        gameOverText.lineSpacing = -6
 
 
     }
@@ -185,16 +195,18 @@ class Game extends Phaser.State {
                     //console.log(this.score)
              } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
                     console.log('you are being attacked!')
-                    this.removePlayer(id)
+                        this.playerMap[id].destroy();
+                        delete this.playerMap[id];
+                        ///GAME OVER!!!///
+                        let gameOverText = "GAME OVER!"
+                        gameOver.set(gameOverText)
+                }                        
             }
 
 
             }
 
-
-
-
-        })
+        )
 
     }
 
