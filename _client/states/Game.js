@@ -129,6 +129,7 @@ class Game extends Phaser.State {
 
         Object.keys(this.foodMap).forEach(food => {
             let foodLocation = this.foodMap[food].worldPosition
+            
             if(playerLocation.x > foodLocation.x - 15 && playerLocation.x < foodLocation.x + 15){
                 this.playerMap[id].width += 3;
                 this.playerMap[id].height += 3;
@@ -137,6 +138,30 @@ class Game extends Phaser.State {
                 this.score[this.playerMap[id].teamName]++;
                 this.growPlayer(id, this.playerMap[id].width, this.playerMap[id].height, this.playerMap[id].x, this.playerMap[id].y)
             }
+
+        })
+
+    }
+    attackEnemy = function(id){
+
+        let playerLocation = this.playerMap[id].worldPosition
+
+        Object.keys(this.playerMap).forEach(enemy => {
+            if(this.playerMap[enemy] !== this.playerMap[id]){
+                let enemyLocation = this.playerMap[enemy].worldPosition
+                console.log('enemy is', (Math.abs(playerLocation.x - enemyLocation.x )), 'spaces away!')
+                if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && this.playerMap[enemy].width < this.playerMap[id].width && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
+                    console.log('enemy was sucessfully attacked.')
+                    this.score[this.playerMap[id].teamName] += this.playerMap[enemy].width;
+                    this.removePlayer(enemy)
+                    console.log(this.score)
+            }
+
+
+            }
+
+            
+
 
         })
 

@@ -15,7 +15,6 @@ class Client {
         })
 
         this.socket.on('allplayers',function(data){
-            console.log('emitting to all!')
             for(var i = 0; i < data.length; i++){
                 game.addNewPlayer(data[i].id, data[i].x, data[i].y, data.width, data.height)
             }
@@ -24,6 +23,7 @@ class Client {
         this.socket.on('move',function(data){
             game.movePlayer(data.id,data.x,data.y);
             game.eatFood(data.id);
+            game.attackEnemy(data.id);
         })
 
         this.socket.on('remove',function(id){
