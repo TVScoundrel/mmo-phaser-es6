@@ -61,14 +61,25 @@ class Game extends Phaser.State {
 
 
         //making food in game:
-         let j = 0
-         for (var i = 0; i < 40; i++){
-                let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
+        //  let j = 0
+        //  for (var i = 0; i < 40; i++){
+        //         let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
+        //         newFood.anchor.setTo(0.5, 0.5);
+        //         this.foodMap[this.foodId] = newFood
+        //         this.foodId++;
+        //         this.foodCount++;
+        //         j+= 2
+        //     }
+
+            for (var i = 0; i <= 40; i++){
+                console.log('making more food')
+                let x = Math.floor(Math.random() * 2000);
+                let y = Math.floor(Math.random() * 2000);
+                let newFood = this.game.add.sprite(x, y, 'pizza')
                 newFood.anchor.setTo(0.5, 0.5);
-                this.foodMap[this.foodId] = newFood
-                this.foodId++;
-                this.foodCount++;
-                j+= 2
+                this.foodMap[this.foodId] = newFood;
+                this.foodId++
+                this.foodCount++
             }
 
         //STEP ONE:
@@ -182,8 +193,8 @@ class Game extends Phaser.State {
             let foodLocation = this.foodMap[food].worldPosition
 
             if(playerLocation.x > foodLocation.x - 12 && playerLocation.x < foodLocation.x + 12){
-                this.playerMap[id].width += 3;
-                this.playerMap[id].height += 3;
+                this.playerMap[id].width += 2;
+                this.playerMap[id].height += 2;
                 this.removeFood(food)
                 this.foodCount--;
                 this.playerMap[id].playerPoints += 1
