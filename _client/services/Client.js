@@ -8,9 +8,6 @@ class Client {
 
         //STEP THREE:
         this.socket.on('newplayer',function(data){
-            if(data.destroy === true){ 
-                game.resize(data.id) 
-            }//team?
             game.addNewPlayer(data.id, data.x, data.y, data.width, data.height)
         })
 
@@ -24,6 +21,7 @@ class Client {
             game.movePlayer(data.id,data.x,data.y);
             game.eatFood(data.id);
             game.attackEnemy(data.id);
+            game.updateScore(data.id)
         })
 
         this.socket.on('remove',function(id){
@@ -39,7 +37,7 @@ class Client {
     sendClick(x, y) {
         this.socket.emit('click', { x, y })
     }
-
+    
 
     sendSize(id, x, y, width, height) {
         let data = { id, x, y, width, height, destroy: true }
