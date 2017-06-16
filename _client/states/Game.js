@@ -94,6 +94,9 @@ class Game extends Phaser.State {
         this.playerMap[id].width = width || 25;
         this.playerMap[id].height = height || 25;
 
+        //every player earns their own points
+        this.playerMap[id].playerPoints = 0;
+
         // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
 
@@ -135,13 +138,17 @@ class Game extends Phaser.State {
                 this.playerMap[id].height += 3;
                 this.removeFood(food)
                 this.foodCount--;
-                this.score[this.playerMap[id].teamName]++;
+
+                this.playerMap[id].playerPoints += 20
+                console.log('player got 20 points')
                 this.growPlayer(id, this.playerMap[id].width, this.playerMap[id].height, this.playerMap[id].x, this.playerMap[id].y)
             }
 
         })
 
     }
+
+    // attack enemy not refactored for scoring system yet
     attackEnemy = function(id){
 
         let playerLocation = this.playerMap[id].worldPosition
@@ -149,12 +156,17 @@ class Game extends Phaser.State {
         Object.keys(this.playerMap).forEach(enemy => {
             if(this.playerMap[enemy] !== this.playerMap[id]){
                 let enemyLocation = this.playerMap[enemy].worldPosition
-                console.log('enemy is', (Math.abs(playerLocation.x - enemyLocation.x )), 'spaces away!')
-                if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && this.playerMap[enemy].width < this.playerMap[id].width && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
+               
+                // changed this: (Math.abs(this.playerMap[enemy].width - this.playerMap[id].width) < 15) might be too much?
+                if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[id].width - this.playerMap[enemy].width >= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
                     this.score[this.playerMap[id].teamName] += this.playerMap[enemy].width;
                     this.removePlayer(enemy)
-                    console.log(this.score)
+                    //console.log(this.score)
+             } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
+                    console.log('you are being attacked!')
+                    this.score[this.playerMap[enemy].teamName] += this.playerMap[id].width;
+                    this.removePlayer(id)
             }
 
 
@@ -165,6 +177,24 @@ class Game extends Phaser.State {
 
         })
 
+    }
+
+    updateScore(id){
+        console.log(this.playerMap[id].teamName, 'scored a point!')
+
+        if(this.playerMap[id].teamName === 'orange'){
+            this.score.orange += Math.floor(this.playerMap[id].playerPoints)
+        }
+        else if(this.playerMap[id].teamName === 'teal'){
+            this.score.teal += Math.floor(this.playerMap[id].playerPoints)
+        }
+
+        
+        console.log(this.score)
+
+        //reset player's points:
+        this.playerMap[id].playerPoints = 0;
+        
     }
 
     growPlayer = function(id, width, height, x, y){
