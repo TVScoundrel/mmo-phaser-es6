@@ -27,16 +27,28 @@ class Game extends Phaser.State {
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
+
+
+        // this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+        // this.game.scale.setUserScale(1, 1);
+        // this.game.renderer.renderSession.roundPixels = true;
+        // Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
     }
 
     create() {
+      Phaser.ScaleManager.prototype.setScreenSize = Phaser.ScaleManager.prototype.updateLayout;
+
+      this.game.scale.pageAlignHorizontally = true;
+      this.game.scale.pageAlignVertically = true;
+      this.game.scale.setScreenSize(true);
+
         let logo = this.game.add.sprite(0, 200, 'assets/sprites/logo.png');
         logo.fixedToCamera = true;
 
         let camX = 0;
         let camY = 0;
 
-        this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
+        //this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
 
@@ -60,7 +72,7 @@ class Game extends Phaser.State {
 
         //STEP ONE:
         this.client.askNewPlayer()
-
+        console.log(this.playerMap)
         layer.events.onInputUp.add(this.getCoordinates, this)
 
         let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
@@ -207,7 +219,6 @@ class Game extends Phaser.State {
                         this.playerMap[id].destroy();
                         delete this.playerMap[id];
                         ///GAME OVER!!!///
-
                 }
             }
 
