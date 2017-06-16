@@ -149,7 +149,6 @@ class Game extends Phaser.State {
         let superSpeedy = 4;
 
         let speed = 4;
-
        
         let scale = Math.floor(player.scale.x * 100)
 
