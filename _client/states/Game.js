@@ -16,7 +16,8 @@ class Game extends Phaser.State {
         this.foodMap = {}
         this.foodId = 0
         this.foodCount = 0
-        this.initialFoodParams = [222,100,388,342,931,222,222,777,290,999,666,444,388,342,931,222,222,777,290,999]
+        let x = () => {Math.floor(Math.random() * 2000)}
+        this.initialFoodParams = [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x]
     }
 
     preload() {
@@ -202,7 +203,7 @@ class Game extends Phaser.State {
                 let enemyLocation = this.playerMap[enemy].worldPosition
 
                 // changed this: (Math.abs(this.playerMap[enemy].width - this.playerMap[id].width) < 15) might be too much?
-                if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[id].width - this.playerMap[enemy].width >= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
+                if((Math.abs(playerLocation.x - enemyLocation.x ) < 5) && (this.playerMap[id].width - this.playerMap[enemy].width >= 30 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
                     this.playerMap[id].playerPoints += Math.floor(this.playerMap[enemy].width/2);
                     this.removePlayer(enemy)
@@ -214,7 +215,7 @@ class Game extends Phaser.State {
                     gameOverText.anchor.setTo(0.5)
                     function set(){return gameOverText.setText("")}
                     setTimeout(set, 4000)
-             } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
+             } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 5) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 30 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
                     console.log('you are being attacked!')
                         this.playerMap[id].destroy();
                         delete this.playerMap[id];
