@@ -27,9 +27,21 @@ class Game extends Phaser.State {
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
+
+
+        // this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+        // this.game.scale.setUserScale(1, 1);
+        // this.game.renderer.renderSession.roundPixels = true;
+        // Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
     }
 
     create() {
+      Phaser.ScaleManager.prototype.setScreenSize = Phaser.ScaleManager.prototype.updateLayout;
+
+      this.game.scale.pageAlignHorizontally = true;
+      this.game.scale.pageAlignVertically = true;
+      this.game.scale.setScreenSize(true);
+
         let logo = this.game.add.sprite(0, 200, 'assets/sprites/logo.png');
         logo.fixedToCamera = true;
 
@@ -60,7 +72,7 @@ class Game extends Phaser.State {
 
         //STEP ONE:
         this.client.askNewPlayer()
-
+        console.log(this.playerMap)
         layer.events.onInputUp.add(this.getCoordinates, this)
 
         let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
@@ -128,7 +140,7 @@ class Game extends Phaser.State {
 
 
 
-        //this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
+        this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
     }
 
     update(){
@@ -200,7 +212,7 @@ class Game extends Phaser.State {
                         ///GAME OVER!!!///
                         let gameOverText = "GAME OVER!"
                         gameOver.set(gameOverText)
-                }                        
+                }
             }
 
 
