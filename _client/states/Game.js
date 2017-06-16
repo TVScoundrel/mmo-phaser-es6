@@ -8,7 +8,6 @@ class Game extends Phaser.State {
         this.playerMap = {}
         this.tealTeamMap = {}
         this.orangeTeamMap = {}
-        this.currentPlayer = {}
         this.score = {
             teal: 0,
             orange: 0
@@ -16,7 +15,7 @@ class Game extends Phaser.State {
         this.foodMap = {}
         this.foodId = 0
         this.foodCount = 0
-        this.initialFoodParams = [300,100,300,223,340,231,367,231,290,210]
+        this.initialFoodParams = [111,100,388,342,931,222,222,777,290,999,111,100,388,342,931,222,222,777,290,999]
     }
 
 
@@ -27,13 +26,16 @@ class Game extends Phaser.State {
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
+        this.game.load.image('pizza','assets/sprites/logo.png')
     }
 
     create() {
+        let logo = this.game.add.sprite(0, 200, 'assets/sprites/logo.png');
+        logo.fixedToCamera = true;
 
-        // Scale the game to fill the entire page.
-        //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //this.game.world.bounds.setTo(0, 0, 2000, 2000); // set the dimensions of the game world to those received from the server
+        let camX = 0;
+        let camY = 0;
+        
         this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
@@ -46,7 +48,7 @@ class Game extends Phaser.State {
 
         //making food in game:
          let j = 0
-         for (var i = 0; i < 5; i++){
+         for (var i = 0; i < 20; i++){
                 let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood
@@ -60,8 +62,6 @@ class Game extends Phaser.State {
 
         layer.events.onInputUp.add(this.getCoordinates, this)
 
-
-
     }
 
     getCoordinates(layer, pointer) {
@@ -69,7 +69,9 @@ class Game extends Phaser.State {
     }
 
     //STEP FOUR
-    addNewPlayer(id, x, y, team) {
+    addNewPlayer(id, x, y, width, height) {
+
+        let team;
         if(id%2===0) team = 'orange'
         else team = 'teal'
 
@@ -89,28 +91,27 @@ class Game extends Phaser.State {
                          else{this.tealTeamMap[id].teamName = 'teal'}
                          
         // SET PLAYER SIZE:
-        this.playerMap[id].width = 25;
-        this.playerMap[id].height = 25;
+        this.playerMap[id].width = width || 25;
+        this.playerMap[id].height = height || 25;
 
         // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
-        this.currentPlayer = this.playerMap[id]
-        // console.log("currentPlayer", this.playerMap)
-        // if(id === this.currentPlayer){
 
-          this.game.camera.follow(this.currentPlayer, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
-        //}
+        
+
+        this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
     }
 
     update(){
         // CHECK FOR SCORE UPDATES  HERE AND REPOST SCOREBORD! //
 
         // Regenerating food
-        if(this.foodCount < 5){
-            let offSet = (5 - this.foodCount)
+        if(this.foodCount < 20){
+            let offSet = (20 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
-                let x = Math.floor(Math.random() * 500);
-                let y = Math.floor(Math.random() * 500);
+                console.log('making more food')
+                let x = Math.floor(Math.random() * 2000);
+                let y = Math.floor(Math.random() * 2000);
                 let newFood = this.game.add.sprite(x, y, 'pizza')
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood;
@@ -128,34 +129,59 @@ class Game extends Phaser.State {
 
         Object.keys(this.foodMap).forEach(food => {
             let foodLocation = this.foodMap[food].worldPosition
+            
             if(playerLocation.x > foodLocation.x - 15 && playerLocation.x < foodLocation.x + 15){
-                this.playerMap[id].width += 1;
-                this.playerMap[id].height += 1;
+                this.playerMap[id].width += 3;
+                this.playerMap[id].height += 3;
                 this.removeFood(food)
                 this.foodCount--;
                 this.score[this.playerMap[id].teamName]++;
+                this.growPlayer(id, this.playerMap[id].width, this.playerMap[id].height, this.playerMap[id].x, this.playerMap[id].y)
             }
-            console.log(this.score)
+
+        })
+
+    }
+    attackEnemy = function(id){
+
+        let playerLocation = this.playerMap[id].worldPosition
+
+        Object.keys(this.playerMap).forEach(enemy => {
+            if(this.playerMap[enemy] !== this.playerMap[id]){
+                let enemyLocation = this.playerMap[enemy].worldPosition
+                console.log('enemy is', (Math.abs(playerLocation.x - enemyLocation.x )), 'spaces away!')
+                if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && this.playerMap[enemy].width < this.playerMap[id].width && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
+                    console.log('enemy was sucessfully attacked.')
+                    this.score[this.playerMap[id].teamName] += this.playerMap[enemy].width;
+                    this.removePlayer(enemy)
+                    console.log(this.score)
+            }
+
+
+            }
+
+            
+
 
         })
 
     }
 
-    growPlayer = function(id, x, y){
+    growPlayer = function(id, width, height, x, y){
         ///grow player, emit info 
-        // this.client.sendNewSize(x, y)
+        this.client.sendSize(id, width, height, x, y)
     }
     
     //copy this pattern for player BIGGER
     movePlayer = function(id, x, y){
         let player = this.playerMap[id];
 
-        let superGlacial = 16;
-        let glacial = 14;
+        let superGlacial = 15;
+        let glacial = 13;
         let slow = 12;
-        let normalSpeed = 10;
-        let fast = 8;
-        let speedy = 6;
+        let normalSpeed = 9;
+        let fast = 7;
+        let speedy = 5;
         let superSpeedy = 4;
 
         let speed = 4;
@@ -163,12 +189,12 @@ class Game extends Phaser.State {
         let scale = Math.floor(player.scale.x * 100)
 
              if(scale <= 5){speed = superSpeedy}
-        else if(scale <= 10){speed = speedy}
-        else if(scale <= 15){speed = fast}
-        else if(scale <= 20){speed = normalSpeed}
-        else if(scale <= 25){speed = slow}
-        else if(scale <= 30){speed = glacial}
-        else if(scale >  35){speed = superGlacial}
+        else if(scale <= 45){speed = speedy}
+        else if(scale <= 55){speed = fast}
+        else if(scale <= 65){speed = normalSpeed}
+        else if(scale <= 75){speed = slow}
+        else if(scale <= 95){speed = glacial}
+        else if(scale >  105){speed = superGlacial}
 
         
         let distance = Phaser.Math.distance(player.x, player.y, x, y);
@@ -176,6 +202,13 @@ class Game extends Phaser.State {
         let tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
+        
+    }
+    
+    resize (id) {
+        this.gameMap[id].destroy();
+        delete this.gameMap[id];
+        console.log('she got deleted')
     }
 
     removeFood = function(id){
