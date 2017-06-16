@@ -1,6 +1,5 @@
 import Client from '../services/Client'
-let cursors;
-
+let orangeText;
 class Game extends Phaser.State {
     constructor() {
         super()
@@ -18,7 +17,6 @@ class Game extends Phaser.State {
         this.initialFoodParams = [111,100,388,342,931,222,222,777,290,999,111,100,388,342,931,222,222,777,290,999]
     }
 
-
     preload() {
         this.game.stage.disableVisibilityChange = true
         this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
@@ -35,7 +33,7 @@ class Game extends Phaser.State {
 
         let camX = 0;
         let camY = 0;
-        
+
         this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
@@ -45,6 +43,7 @@ class Game extends Phaser.State {
             layer = map.createLayer(i)
         }
         layer.inputEnabled = true
+
 
         //making food in game:
          let j = 0
@@ -61,6 +60,23 @@ class Game extends Phaser.State {
         this.client.askNewPlayer()
 
         layer.events.onInputUp.add(this.getCoordinates, this)
+
+        let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
+        leaderboard.fixedToCamera= true;
+        leaderboard.font = 'Audiowide'
+        leaderboard.padding.set(10, 16)
+        leaderboard.fontSize = 30
+        leaderboard.fill = 'white'
+        //leaderboard.smoothed = false
+        leaderboard.anchor.setTo(0.5)
+        orangeText = this.game.add.text(this.world.centerX - 255, this.world.centerY -207, "Orange Team:  0 \nTeal Team:  0")
+        orangeText.fixedToCamera= true;
+        orangeText.font = 'Audiowide'
+        orangeText.fontSize = 20
+        orangeText.fill = 'white'
+        orangeText.anchor.setTo(0.5)
+        orangeText.lineSpacing = -6
+
 
     }
 
@@ -89,7 +105,7 @@ class Game extends Phaser.State {
         // ADD TEAM PROPERTY TO PLAYER?
         if(team === 'orange'){this.orangeTeamMap[id].teamName = 'orange'}
                          else{this.tealTeamMap[id].teamName = 'teal'}
-                         
+
         // SET PLAYER SIZE:
         this.playerMap[id].width = width || 25;
         this.playerMap[id].height = height || 25;
@@ -97,14 +113,23 @@ class Game extends Phaser.State {
         // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
 
-        
+
 
         this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
     }
 
     update(){
         // CHECK FOR SCORE UPDATES  HERE AND REPOST SCOREBORD! //
-
+        let orangeFirst = "1st - Orange Team:  "+this.score.orange+ "\n2cd - Teal Team:  "+this.score.teal
+        let tealFirst = "1st - Teal Team:  "+this.score.teal+ "\n2cd - Orange Team:  "+this.score.orange
+        if(this.score.teal > this.score.orange){
+          orangeText.setText(tealFirst)
+        }else if(this.score.orange > this.score.teal){
+          orangeText.setText(orangeFirst)
+        }
+        // this.score.orange +=2
+        // this.score.teal += 1
+        // orangeText.setText("Orange Team:  "+this.score.orange+ "\nTeal Team:  "+this.score.teal)
         // Regenerating food
         if(this.foodCount < 20){
             let offSet = (20 - this.foodCount)
@@ -120,7 +145,7 @@ class Game extends Phaser.State {
             }
         }
     }
-    
+
 
 
     eatFood = function(id){
@@ -129,7 +154,7 @@ class Game extends Phaser.State {
 
         Object.keys(this.foodMap).forEach(food => {
             let foodLocation = this.foodMap[food].worldPosition
-            
+
             if(playerLocation.x > foodLocation.x - 15 && playerLocation.x < foodLocation.x + 15){
                 this.playerMap[id].width += 3;
                 this.playerMap[id].height += 3;
@@ -160,7 +185,7 @@ class Game extends Phaser.State {
 
             }
 
-            
+
 
 
         })
@@ -168,10 +193,10 @@ class Game extends Phaser.State {
     }
 
     growPlayer = function(id, width, height, x, y){
-        ///grow player, emit info 
+        ///grow player, emit info
         this.client.sendSize(id, width, height, x, y)
     }
-    
+
     //copy this pattern for player BIGGER
     movePlayer = function(id, x, y){
         let player = this.playerMap[id];
@@ -185,7 +210,7 @@ class Game extends Phaser.State {
         let superSpeedy = 4;
 
         let speed = 4;
-       
+
         let scale = Math.floor(player.scale.x * 100)
 
              if(scale <= 5){speed = superSpeedy}
@@ -196,15 +221,15 @@ class Game extends Phaser.State {
         else if(scale <= 95){speed = glacial}
         else if(scale >  105){speed = superGlacial}
 
-        
+
         let distance = Phaser.Math.distance(player.x, player.y, x, y);
         let duration = distance * speed; //correlated to this.playerMap[id].width
         let tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
-        
+
     }
-    
+
     resize (id) {
         this.gameMap[id].destroy();
         delete this.gameMap[id];
