@@ -35,6 +35,11 @@ class Client {
     sendClick(x, y) {
         this.socket.emit('click', { x, y })
     }
+
+
+    // sendSize(x, y) {
+    //     this.socket.emit('size', { x, y })
+    // }
 }
 
 export default Client
