@@ -16,8 +16,6 @@ class Game extends Phaser.State {
         this.foodMap = {}
         this.foodId = 0
         this.foodCount = 0
-        let x = () => {Math.floor(Math.random() * 2000)}
-        this.initialFoodParams = [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x]
     }
 
     preload() {
@@ -28,12 +26,6 @@ class Game extends Phaser.State {
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
-
-
-        // this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-        // this.game.scale.setUserScale(1, 1);
-        // this.game.renderer.renderSession.roundPixels = true;
-        // Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
     }
 
     create() {
@@ -59,17 +51,6 @@ class Game extends Phaser.State {
         }
         layer.inputEnabled = true
 
-
-        //making food in game:
-        //  let j = 0
-        //  for (var i = 0; i < 40; i++){
-        //         let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
-        //         newFood.anchor.setTo(0.5, 0.5);
-        //         this.foodMap[this.foodId] = newFood
-        //         this.foodId++;
-        //         this.foodCount++;
-        //         j+= 2
-        //     }
 
             for (var i = 0; i <= 40; i++){
                 console.log('making more food')
@@ -245,16 +226,30 @@ class Game extends Phaser.State {
         console.log(this.playerMap[id].teamName, 'scored a point!')
 
         if(this.playerMap[id].teamName === 'orange'){
-            this.score.orange += Math.floor(this.playerMap[id].playerPoints)
+            this.score.orange = 0
+            Object.keys(this.playerMap).forEach(o => {
+                if (this.playerMap[o].teamName === 'orange'){
+                    this.score.orange += this.playerMap[o].playerPoints
+                }
+            })
+      
+            //this.score.orange += Math.floor(this.playerMap[id].playerPoints)
         }
         else if(this.playerMap[id].teamName === 'teal'){
-            this.score.teal += Math.floor(this.playerMap[id].playerPoints)
+            this.score.teal = 0;
+            Object.keys(this.playerMap).forEach(t => {
+                if (this.playerMap[o].teamName === 'teal'){
+                    this.score.teal += this.playerMap[o].playerPoints
+                }
+            })
+            
+            //this.score.teal += Math.floor(this.playerMap[id].playerPoints)
         }
 
         console.log(this.score)
 
         //reset player's points:
-        this.playerMap[id].playerPoints = 0;
+        //this.playerMap[id].playerPoints = 0;
 
     }
 
