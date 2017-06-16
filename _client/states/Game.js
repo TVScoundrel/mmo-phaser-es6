@@ -27,16 +27,28 @@ class Game extends Phaser.State {
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
+
+
+        // this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+        // this.game.scale.setUserScale(1, 1);
+        // this.game.renderer.renderSession.roundPixels = true;
+        // Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
     }
 
     create() {
+      Phaser.ScaleManager.prototype.setScreenSize = Phaser.ScaleManager.prototype.updateLayout;
+
+      this.game.scale.pageAlignHorizontally = true;
+      this.game.scale.pageAlignVertically = true;
+      this.game.scale.setScreenSize(true);
+
         let logo = this.game.add.sprite(0, 200, 'assets/sprites/logo.png');
         logo.fixedToCamera = true;
 
         let camX = 0;
         let camY = 0;
 
-        this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
+        //this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
 
@@ -60,7 +72,7 @@ class Game extends Phaser.State {
 
         //STEP ONE:
         this.client.askNewPlayer()
-
+        console.log(this.playerMap)
         layer.events.onInputUp.add(this.getCoordinates, this)
 
         let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
@@ -186,7 +198,7 @@ class Game extends Phaser.State {
         Object.keys(this.playerMap).forEach(enemy => {
             if(this.playerMap[enemy] !== this.playerMap[id]){
                 let enemyLocation = this.playerMap[enemy].worldPosition
-               
+
                 // changed this: (Math.abs(this.playerMap[enemy].width - this.playerMap[id].width) < 15) might be too much?
                 if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[id].width - this.playerMap[enemy].width >= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
@@ -200,7 +212,7 @@ class Game extends Phaser.State {
                         ///GAME OVER!!!///
                         let gameOverText = "GAME OVER!"
                         gameOver.set(gameOverText)
-                }                        
+                }
             }
 
 
@@ -219,12 +231,12 @@ class Game extends Phaser.State {
         else if(this.playerMap[id].teamName === 'teal'){
             this.score.teal += Math.floor(this.playerMap[id].playerPoints)
         }
-     
+
         console.log(this.score)
 
         //reset player's points:
         this.playerMap[id].playerPoints = 0;
-        
+
     }
 
     growPlayer = function(id, width, height, x, y){
