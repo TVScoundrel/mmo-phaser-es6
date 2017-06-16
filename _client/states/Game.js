@@ -8,7 +8,6 @@ class Game extends Phaser.State {
         this.playerMap = {}
         this.tealTeamMap = {}
         this.orangeTeamMap = {}
-        this.currentPlayer = {}
         this.score = {
             teal: 0,
             orange: 0
@@ -27,13 +26,16 @@ class Game extends Phaser.State {
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
+        this.game.load.image('pizza','assets/sprites/logo.png')
     }
 
     create() {
+        let logo = this.game.add.sprite(0, 200, 'assets/sprites/logo.png');
+        logo.fixedToCamera = true;
 
-        // Scale the game to fill the entire page.
-        //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //this.game.world.bounds.setTo(0, 0, 2000, 2000); // set the dimensions of the game world to those received from the server
+        let camX = 0;
+        let camY = 0;
+        
         this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
@@ -60,8 +62,6 @@ class Game extends Phaser.State {
 
         layer.events.onInputUp.add(this.getCoordinates, this)
 
-
-
     }
 
     getCoordinates(layer, pointer) {
@@ -69,7 +69,9 @@ class Game extends Phaser.State {
     }
 
     //STEP FOUR
-    addNewPlayer(id, x, y, team) {
+    addNewPlayer(id, x, y, width, height) {
+
+        let team;
         if(id%2===0) team = 'orange'
         else team = 'teal'
 
@@ -89,17 +91,15 @@ class Game extends Phaser.State {
                          else{this.tealTeamMap[id].teamName = 'teal'}
                          
         // SET PLAYER SIZE:
-        this.playerMap[id].width = 25;
-        this.playerMap[id].height = 25;
+        this.playerMap[id].width = width || 25;
+        this.playerMap[id].height = height || 25;
 
         // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
-        this.currentPlayer = this.playerMap[id]
-        // console.log("currentPlayer", this.playerMap)
-        // if(id === this.currentPlayer){
 
-          this.game.camera.follow(this.currentPlayer, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
-        //}
+        
+
+        this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
     }
 
     update(){
@@ -135,15 +135,16 @@ class Game extends Phaser.State {
                 this.removeFood(food)
                 this.foodCount--;
                 this.score[this.playerMap[id].teamName]++;
+                this.growPlayer(id, this.playerMap[id].width, this.playerMap[id].height, this.playerMap[id].x, this.playerMap[id].y)
             }
 
         })
 
     }
 
-    growPlayer = function(id, x, y){
+    growPlayer = function(id, width, height, x, y){
         ///grow player, emit info 
-        // this.client.sendNewSize(x, y)
+        this.client.sendSize(id, width, height, x, y)
     }
     
     //copy this pattern for player BIGGER
@@ -176,6 +177,13 @@ class Game extends Phaser.State {
         let tween = this.game.add.tween(player);
         tween.to({ x, y }, duration);
         tween.start();
+        
+    }
+    
+    resize (id) {
+        this.gameMap[id].destroy();
+        delete this.gameMap[id];
+        console.log('she got deleted')
     }
 
     removeFood = function(id){
