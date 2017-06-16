@@ -1,6 +1,6 @@
 import Client from '../services/Client'
 let orangeText;
-let gameOverText;
+let gameOver;
 
 class Game extends Phaser.State {
     constructor() {
@@ -79,13 +79,15 @@ class Game extends Phaser.State {
         orangeText.anchor.setTo(0.5)
         orangeText.lineSpacing = -6
 
-        gameOverText = this.game.add.text(this.world.centerX - 500, this.world.centerY - 500, "")
-        gameOverText.fixedToCamera= true;
-        gameOverText.font = 'Audiowide'
-        gameOverText.fontSize = 40
-        gameOverText.fill = 'purple'
-        gameOverText.anchor.setTo(0.5)
-        gameOverText.lineSpacing = -6
+        // gameOver = function(){
+        //   console.log("GAME OVER TEXT")
+        //   let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
+        //   gameOverText.fixedToCamera= true;
+        //   gameOverText.font = 'Audiowide'
+        //   gameOverText.fontSize = 40
+        //   gameOverText.fill = 'purple'
+        //   gameOverText.anchor.setTo(0.5)
+        // }
 
 
     }
@@ -128,7 +130,7 @@ class Game extends Phaser.State {
 
 
 
-        this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
+        //this.game.camera.follow(this.playerMap[id], Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
     }
 
     update(){
@@ -186,21 +188,27 @@ class Game extends Phaser.State {
         Object.keys(this.playerMap).forEach(enemy => {
             if(this.playerMap[enemy] !== this.playerMap[id]){
                 let enemyLocation = this.playerMap[enemy].worldPosition
-               
+
                 // changed this: (Math.abs(this.playerMap[enemy].width - this.playerMap[id].width) < 15) might be too much?
                 if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[id].width - this.playerMap[enemy].width >= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
                     this.playerMap[id].playerPoints += Math.floor(this.playerMap[enemy].width/2);
                     this.removePlayer(enemy)
-                    //console.log(this.score)
+                    let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
+                    gameOverText.fixedToCamera= true;
+                    gameOverText.font = 'Audiowide'
+                    gameOverText.fontSize = 40
+                    gameOverText.fill = 'purple'
+                    gameOverText.anchor.setTo(0.5)
+                    function set(){return gameOverText.setText("")}
+                    setTimeout(set, 4000)
              } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
                     console.log('you are being attacked!')
                         this.playerMap[id].destroy();
                         delete this.playerMap[id];
                         ///GAME OVER!!!///
-                        let gameOverText = "GAME OVER!"
-                        gameOver.set(gameOverText)
-                }                        
+
+                }
             }
 
 
@@ -219,12 +227,12 @@ class Game extends Phaser.State {
         else if(this.playerMap[id].teamName === 'teal'){
             this.score.teal += Math.floor(this.playerMap[id].playerPoints)
         }
-     
+
         console.log(this.score)
 
         //reset player's points:
         this.playerMap[id].playerPoints = 0;
-        
+
     }
 
     growPlayer = function(id, width, height, x, y){
