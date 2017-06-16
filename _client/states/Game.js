@@ -1,4 +1,5 @@
 import Client from '../services/Client'
+let cursors;
 
 class Game extends Phaser.State {
     constructor() {
@@ -7,6 +8,7 @@ class Game extends Phaser.State {
         this.playerMap = {}
         this.tealTeamMap = {}
         this.orangeTeamMap = {}
+        this.currentPlayer = {}
         this.score = {
             teal: 0,
             orange: 0
@@ -21,7 +23,7 @@ class Game extends Phaser.State {
     preload() {
         this.game.stage.disableVisibilityChange = true
         this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
-        this.game.load.image('tileset', 'assets/map/purps.png')
+        this.game.load.image('tileset', 'assets/map/floor1.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
@@ -30,8 +32,9 @@ class Game extends Phaser.State {
     create() {
 
         // Scale the game to fill the entire page.
-        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-
+        //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //this.game.world.bounds.setTo(0, 0, 2000, 2000); // set the dimensions of the game world to those received from the server
+        this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
 
@@ -39,8 +42,6 @@ class Game extends Phaser.State {
         for(var i = 0; i < map.layers.length; i++) {
             layer = map.createLayer(i)
         }
-        console.log(layer)
-        //layer.scale = {x:5, y:5}
         layer.inputEnabled = true
 
         //making food in game:
@@ -52,12 +53,15 @@ class Game extends Phaser.State {
                 this.foodId++;
                 this.foodCount++;
                 j+= 2
-            } 
-   
+            }
+
         //STEP ONE:
         this.client.askNewPlayer()
 
         layer.events.onInputUp.add(this.getCoordinates, this)
+
+
+
     }
 
     getCoordinates(layer, pointer) {
@@ -74,8 +78,9 @@ class Game extends Phaser.State {
         // CREATE THE PLAYER:
         if(team === 'orange'){this.playerMap[id] = this.game.add.sprite(x, y, 'orangeSprite')}
                          else{this.playerMap[id] = this.game.add.sprite(x, y, 'tealSprite')}
-        
+
         // ADD TO TEAM MAP:
+
         if(team === 'orange'){this.orangeTeamMap[id] = this.playerMap[id]}
                          else{this.tealTeamMap[id] = this.playerMap[id]}
 
@@ -89,11 +94,16 @@ class Game extends Phaser.State {
 
         // anchor point to middle:
         this.playerMap[id].anchor.setTo(0.5, 0.5);
+        this.currentPlayer = this.playerMap[id]
+        // console.log("currentPlayer", this.playerMap)
+        // if(id === this.currentPlayer){
 
+          this.game.camera.follow(this.currentPlayer, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT)
+        //}
     }
 
     update(){
-        // CHECK FOR SCORE UPDATES HERE AND REPOST SCOREBORD! //
+        // CHECK FOR SCORE UPDATES  HERE AND REPOST SCOREBORD! //
 
         // Regenerating food
         if(this.foodCount < 5){
@@ -107,7 +117,7 @@ class Game extends Phaser.State {
                 this.foodId++
                 this.foodCount++
             }
-        }    
+        }
     }
     
 
