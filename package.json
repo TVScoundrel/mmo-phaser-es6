@@ -20,7 +20,8 @@
   "dependencies": {
     "express": "^4.15.3",
     "phaser": "^2.6.2",
-    "socket.io": "^2.0.1"
+    "socket.io": "^2.0.1",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
