@@ -211,14 +211,14 @@ class Game extends Phaser.State {
                       team = "Teal Team ";
                     }
                     this.removePlayer(enemy)
-                    let gameOverText = this.game.add.text(this.world.centerX, this.world.centerY, team + "lost a player!");
+                    let gameOverText = this.game.add.text(this.world.centerX, this.world.centerY - 300, team + "lost a player!");
                     gameOverText.fixedToCamera= true;
                     gameOverText.font = 'Audiowide'
                     gameOverText.fontSize = 45
                     gameOverText.fill = 'purple'
                     gameOverText.anchor.setTo(0.5)
                     function set(){return gameOverText.setText("")}
-                    setTimeout(set, 2000)
+                    setTimeout(set, 3000)
              } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
                     console.log('you are being attacked!')
                         this.playerMap[id].destroy();
