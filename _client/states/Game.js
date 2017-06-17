@@ -75,18 +75,16 @@ class Game extends Phaser.State {
         console.log(this.playerMap)
         layer.events.onInputUp.add(this.getCoordinates, this)
 
-        let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
-        leaderboard.fixedToCamera= true;
+        let leaderboard = this.game.add.text(this.world.centerX, this.world.centerY -490, "Leaderboard")
         leaderboard.font = 'Audiowide'
         leaderboard.padding.set(10, 16)
-        leaderboard.fontSize = 30
+        leaderboard.fontSize = 48
         leaderboard.fill = 'white'
         //leaderboard.smoothed = false
         leaderboard.anchor.setTo(0.5)
-        orangeText = this.game.add.text(this.world.centerX - 255, this.world.centerY -207, "Orange Team:  0 \nTeal Team:  0")
-        orangeText.fixedToCamera= true;
+        orangeText = this.game.add.text(this.world.centerX, this.world.centerY -430, "Orange Team:  0 \nTeal Team:  0")
         orangeText.font = 'Audiowide'
-        orangeText.fontSize = 20
+        orangeText.fontSize = 32
         orangeText.fill = 'white'
         orangeText.anchor.setTo(0.5)
         orangeText.lineSpacing = -6
@@ -205,15 +203,22 @@ class Game extends Phaser.State {
                 if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[id].width - this.playerMap[enemy].width >= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
                     this.playerMap[id].playerPoints += Math.floor(this.playerMap[enemy].width/2);
+                    console.log(this.playerMap[enemy])
+                    let team;
+                    if(this.playerMap[enemy].key === "orangeSprite"){
+                      team = "Orange Team ";
+                    }else{
+                      team = "Teal Team ";
+                    }
                     this.removePlayer(enemy)
-                    let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
+                    let gameOverText = this.game.add.text(this.world.centerX, this.world.centerY - 300, team + "lost a player!");
                     gameOverText.fixedToCamera= true;
                     gameOverText.font = 'Audiowide'
-                    gameOverText.fontSize = 40
+                    gameOverText.fontSize = 45
                     gameOverText.fill = 'purple'
                     gameOverText.anchor.setTo(0.5)
                     function set(){return gameOverText.setText("")}
-                    setTimeout(set, 4000)
+                    setTimeout(set, 3000)
              } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 8) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 10 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
                     console.log('you are being attacked!')
                         this.playerMap[id].destroy();
