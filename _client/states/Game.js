@@ -26,7 +26,6 @@ class Game extends Phaser.State {
         this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
-        this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
         this.game.load.image('donut', 'assets/sprites/donut.png')
         this.game.load.image('avocado', 'assets/sprites/avocado.png')
@@ -157,8 +156,8 @@ class Game extends Phaser.State {
             let offSet = (40 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
                 console.log('making more food')
-                let x = Math.floor(Math.random() * 2000);
-                let y = Math.floor(Math.random() * 2000);
+                let x = Math.floor(Math.random() * 1950);
+                let y = Math.floor(Math.random() * 1070);
                 let rand = Math.floor(Math.random() * foodArr.length);
                 let randFood = foodArr[rand];
                 let newFood = this.game.add.sprite(x, y, randFood)
