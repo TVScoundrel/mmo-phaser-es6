@@ -22,6 +22,7 @@ class Client {
             game.eatFood(data.id);
             game.attackEnemy(data.id);
             game.updateScore(data.id)
+
         })
 
         this.socket.on('remove',function(id){
