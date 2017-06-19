@@ -1,6 +1,7 @@
 import Client from '../services/Client'
 let orangeText;
 let gameOver;
+let foodArr = ['avocado','banana','chocolate','donut','grapes','hamburger','pizzaSlice','croissant','cheese','meat','martini','watermelon'];
 
 class Game extends Phaser.State {
     constructor() {
@@ -21,11 +22,24 @@ class Game extends Phaser.State {
     preload() {
         this.game.stage.disableVisibilityChange = true
         this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
-        this.game.load.image('tileset', 'assets/map/floor1.png')
+        this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
-        this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
+
+        this.game.load.image('donut', 'assets/sprites/donut.png')
+        this.game.load.image('avocado', 'assets/sprites/avocado.png')
+        this.game.load.image('banana', 'assets/sprites/banana.png')
+        this.game.load.image('chocolate', 'assets/sprites/chocolate.png')
+        this.game.load.image('grapes', 'assets/sprites/grapes.png')
+        this.game.load.image('hamburger', 'assets/sprites/hamburger.png')
+        this.game.load.image('pizzaSlice', 'assets/sprites/pizza_slice.png')
+        this.game.load.image('croissant', 'assets/sprites/une_croissant.png')
+        this.game.load.image('cheese', 'assets/sprites/cheese.png')
+        this.game.load.image('meat', 'assets/sprites/meat.png')
+        this.game.load.image('martini', 'assets/sprites/martini.png')
+        this.game.load.image('watermelon', 'assets/sprites/watermelon.png')
+
     }
 
     create() {
@@ -39,7 +53,7 @@ class Game extends Phaser.State {
       this.game.scale.pageAlignVertically = true;
       this.game.scale.setScreenSize(true);
 
-        //this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
+
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
 
@@ -50,11 +64,15 @@ class Game extends Phaser.State {
         layer.inputEnabled = true
 
 
+
             for (var i = 0; i <= 40; i++){
                 console.log('making more food')
+                let rand = Math.floor(Math.random() * foodArr.length);
+                let randFood = foodArr[rand];
                 let x = Math.floor(Math.random() * 2000);
                 let y = Math.floor(Math.random() * 2000);
-                let newFood = this.game.add.sprite(x, y, 'pizza')
+                let newFood = this.game.add.sprite(x, y, randFood)
+
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood;
                 this.foodId++
@@ -65,31 +83,19 @@ class Game extends Phaser.State {
         this.client.askNewPlayer()
         layer.events.onInputUp.add(this.getCoordinates, this)
 
-        let leaderboard = this.game.add.text(this.world.centerX - 265, this.world.centerY -245, "Leaderboard")
-        leaderboard.fixedToCamera= true;
+        let leaderboard = this.game.add.text(this.world.centerX, this.world.centerY -490, "Leaderboard")
         leaderboard.font = 'Audiowide'
         leaderboard.padding.set(10, 16)
-        leaderboard.fontSize = 30
+        leaderboard.fontSize = 48
         leaderboard.fill = 'white'
         //leaderboard.smoothed = false
         leaderboard.anchor.setTo(0.5)
-        orangeText = this.game.add.text(this.world.centerX - 255, this.world.centerY -207, "Orange Team:  0 \nTeal Team:  0")
-        orangeText.fixedToCamera= true;
+        orangeText = this.game.add.text(this.world.centerX, this.world.centerY -430, "Orange Team:  0 \nTeal Team:  0")
         orangeText.font = 'Audiowide'
-        orangeText.fontSize = 20
+        orangeText.fontSize = 32
         orangeText.fill = 'white'
         orangeText.anchor.setTo(0.5)
         orangeText.lineSpacing = -6
-
-        // gameOver = function(){
-        //   console.log("GAME OVER TEXT")
-        //   let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
-        //   gameOverText.fixedToCamera= true;
-        //   gameOverText.font = 'Audiowide'
-        //   gameOverText.fontSize = 40
-        //   gameOverText.fill = 'purple'
-        //   gameOverText.anchor.setTo(0.5)
-        // }
 
 
     }
@@ -150,9 +156,11 @@ class Game extends Phaser.State {
             let offSet = (40 - this.foodCount)
             for (var i = 0; i <= offSet; i++){
                 console.log('making more food')
-                let x = Math.floor(Math.random() * 2000);
-                let y = Math.floor(Math.random() * 2000);
-                let newFood = this.game.add.sprite(x, y, 'pizza')
+                let x = Math.floor(Math.random() * 1950);
+                let y = Math.floor(Math.random() * 1070);
+                let rand = Math.floor(Math.random() * foodArr.length);
+                let randFood = foodArr[rand];
+                let newFood = this.game.add.sprite(x, y, randFood)
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood;
                 this.foodId++
@@ -196,17 +204,25 @@ class Game extends Phaser.State {
                 if((Math.abs(playerLocation.x - enemyLocation.x ) < 5) && (this.playerMap[id].width - this.playerMap[enemy].width >= 30 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName)){
                     console.log('enemy was sucessfully attacked.')
                     this.playerMap[id].playerPoints += Math.floor(this.playerMap[enemy].width/2);
+                    console.log(this.playerMap[enemy])
+                    let team;
+                    if(this.playerMap[enemy].key === "orangeSprite"){
+                      team = "Orange Team ";
+                    }else{
+                      team = "Teal Team ";
+                    }
                     this.removePlayer(enemy)
-                    let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
+                    let gameOverText = this.game.add.text(this.world.centerX, this.world.centerY - 300, team + "lost a player!");
                     gameOverText.fixedToCamera= true;
                     gameOverText.font = 'Audiowide'
-                    gameOverText.fontSize = 40
+                    gameOverText.fontSize = 45
                     gameOverText.fill = 'purple'
                     gameOverText.anchor.setTo(0.5)
                     function set(){return gameOverText.setText("")}
+
                     setTimeout(set, 4000)
              } else if((Math.abs(playerLocation.x - enemyLocation.x ) < 5) && (this.playerMap[enemy].width - this.playerMap[id].width) <= 30 && this.playerMap[enemy].teamName !== this.playerMap[id].teamName){
-                    console.log('you are being attacked!')
+                        console.log('you are being attacked!')
                         this.playerMap[id].destroy();
                         delete this.playerMap[id];
                         ///GAME OVER!!!///
