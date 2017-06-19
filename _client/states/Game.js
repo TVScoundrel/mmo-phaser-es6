@@ -1,6 +1,7 @@
 import Client from '../services/Client'
 let orangeText;
 let gameOver;
+let foodArr = ['avocado','banana','chocolate','donut','grapes','hamburger','pizzaSlice','croissant','cheese','meat','martini','watermelon'];
 
 class Game extends Phaser.State {
     constructor() {
@@ -27,12 +28,19 @@ class Game extends Phaser.State {
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
         this.game.load.image('pizza','assets/sprites/logo.png')
+        this.game.load.image('donut', 'assets/sprites/donut.png')
+        this.game.load.image('avocado', 'assets/sprites/avocado.png')
+        this.game.load.image('banana', 'assets/sprites/banana.png')
+        this.game.load.image('chocolate', 'assets/sprites/chocolate.png')
+        this.game.load.image('grapes', 'assets/sprites/grapes.png')
+        this.game.load.image('hamburger', 'assets/sprites/hamburger.png')
+        this.game.load.image('pizzaSlice', 'assets/sprites/pizza_slice.png')
+        this.game.load.image('croissant', 'assets/sprites/une_croissant.png')
+        this.game.load.image('cheese', 'assets/sprites/cheese.png')
+        this.game.load.image('meat', 'assets/sprites/meat.png')
+        this.game.load.image('martini', 'assets/sprites/martini.png')
+        this.game.load.image('watermelon', 'assets/sprites/watermelon.png')
 
-
-        // this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-        // this.game.scale.setUserScale(1, 1);
-        // this.game.renderer.renderSession.roundPixels = true;
-        // Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
     }
 
     create() {
@@ -48,7 +56,6 @@ class Game extends Phaser.State {
         let camX = 0;
         let camY = 0;
 
-        //this.game.camera.bounds = new Phaser.Rectangle(0,0,2000,2000); // set the limits in which the camera can move
         var map = this.game.add.tilemap('map',64,64)
         map.addTilesetImage('tileset')
 
@@ -62,7 +69,9 @@ class Game extends Phaser.State {
         //making food in game:
          let j = 0
          for (var i = 0; i < 40; i++){
-                let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], 'pizza')
+           let rand = Math.floor(Math.random() * foodArr.length);
+           let randFood = foodArr[rand];
+                let newFood = this.game.add.sprite(this.initialFoodParams[j], this.initialFoodParams[j+1], randFood)
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood
                 this.foodId++;
@@ -88,16 +97,6 @@ class Game extends Phaser.State {
         orangeText.fill = 'white'
         orangeText.anchor.setTo(0.5)
         orangeText.lineSpacing = -6
-
-        // gameOver = function(){
-        //   console.log("GAME OVER TEXT")
-        //   let gameOverText = this.game.add.text(this.world.centerX -240, this.world.centerY -200, "GAME OVER")
-        //   gameOverText.fixedToCamera= true;
-        //   gameOverText.font = 'Audiowide'
-        //   gameOverText.fontSize = 40
-        //   gameOverText.fill = 'purple'
-        //   gameOverText.anchor.setTo(0.5)
-        // }
 
 
     }
@@ -160,7 +159,9 @@ class Game extends Phaser.State {
                 console.log('making more food')
                 let x = Math.floor(Math.random() * 2000);
                 let y = Math.floor(Math.random() * 2000);
-                let newFood = this.game.add.sprite(x, y, 'pizza')
+                let rand = Math.floor(Math.random() * foodArr.length);
+                let randFood = foodArr[rand];
+                let newFood = this.game.add.sprite(x, y, randFood)
                 newFood.anchor.setTo(0.5, 0.5);
                 this.foodMap[this.foodId] = newFood;
                 this.foodId++
