@@ -22,7 +22,7 @@ class Game extends Phaser.State {
     preload() {
         this.game.stage.disableVisibilityChange = true
         this.game.load.tilemap('map', 'assets/map/backgroundMap.csv')
-        this.game.load.image('tileset', 'assets/map/floor1.png')
+        this.game.load.image('tileset', 'assets/map/purps.png')
         this.game.load.image('orangeSprite','assets/sprites/orange-player.png')
         this.game.load.image('tealSprite','assets/sprites/teal-player.png')
         this.game.load.image('pizza','assets/sprites/pizza.png')
